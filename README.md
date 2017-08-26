@@ -22,12 +22,12 @@ debug 工具
 
 *使用方法*
 ```
-	var cfg *Conf = &Conf{}
-	err = yaml.Unmarshal(data, cfg)
-    if err != nil {
-        return err
-    }
-    kdebug.VarDump(cfg)
+var cfg *Conf = &Conf{}
+err = yaml.Unmarshal(data, cfg)
+if err != nil {
+    return err
+}
+kdebug.VarDump(cfg)
 
 输出：
 [*main.Conf] --> struct[main.Conf] ==> {
