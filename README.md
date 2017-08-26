@@ -35,18 +35,18 @@ kdebug.VarDump(cfg)
         Name [string](6) ==> "peter"
         Height [int] : 180
         Weight [int] : 100
-    } \\end struct
+    } //end struct
     slice[[]*main.Person](2) ==>
         [*main.Person] --> struct[main.Person] ==> {
             Name [string](2) ==> "p1"
             Height [int] : 111
             Weight [int] : 111
-        } \\end struct
+        } //end struct
         [*main.Person] --> struct[main.Person] ==> {
             Name [string](2) ==> "p2"
             Height [int] : 222
             Weight [int] : 222
-        } \\end struct
-    \\end slice
-} \\end struct
+        } //end struct
+    //end slice
+} //end struct
 ```

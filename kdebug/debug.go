@@ -81,7 +81,7 @@ func var_dump(value reflect.Value, indent string, prestr string) {
 			var_dump(value.Index(index), "    "+indent, fmt.Sprintf("%s[%d] : ", indent+"    ", index))
 			index++
 		}
-		fmt.Printf("%s\\\\end %s\n", indent, vKind.String())
+		fmt.Printf("%s//end %s\n", indent, vKind.String())
 
 	//string
 	case vKind == 24:
@@ -94,7 +94,7 @@ func var_dump(value reflect.Value, indent string, prestr string) {
 		for k := 0; k < t.NumField(); k++ {
 			var_dump(value.Field(k), indent+"    ", fmt.Sprintf("%s%s ", indent+"    ", t.Field(k).Name))
 		}
-		fmt.Printf("%s} \\\\end %s\n", indent, vKind.String())
+		fmt.Printf("%s} //end %s\n", indent, vKind.String())
 
 	//Unsafeptr
 	case vKind == 26:
