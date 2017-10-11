@@ -92,11 +92,11 @@ func LogInit(conf map[string]interface{}) error {
 
 	logHdr = &Log{}
 
-	tmpFile, err := conf["file"]
-	fmt.Println(tmpFile, err)
-	if err {
-		file_path, err := tmpFile.(string)
-		if !err {
+	//why use exists ,not use err; for get memeber succ ,exists set to true, not false,
+	tmpFile, exists := conf["file"]
+	if exists {
+		file_path, exists := tmpFile.(string)
+		if !exists {
 			panic("log file path type error, we need string")
 		}
 		//we'll not check file path here
@@ -106,10 +106,10 @@ func LogInit(conf map[string]interface{}) error {
 		panic("log file path not found, please set by file field")
 	}
 
-	tmpRotate, err := conf["rotate"]
-	if !err {
-		logHdr.Rotate, err = tmpRotate.(bool)
-		if !err {
+	tmpRotate, exists := conf["rotate"]
+	if exists {
+		logHdr.Rotate, exists = tmpRotate.(bool)
+		if !exists {
 			io.WriteString(os.Stdout, "log rotate get failed, we need bool type, and now set to true")
 			logHdr.Rotate = true
 		}
@@ -117,10 +117,10 @@ func LogInit(conf map[string]interface{}) error {
 		logHdr.Rotate = false
 	}
 
-	tmpLevel, err := conf["level"]
-	if !err {
-		logHdr.Level, err = tmpLevel.(int)
-		if !err {
+	tmpLevel, exists := conf["level"]
+	if exists {
+		logHdr.Level, exists = tmpLevel.(int)
+		if !exists {
 			io.WriteString(os.Stdout, "log level get failed, we need int type, and now set to debug")
 			logHdr.Level = LOG_DEBUG
 		}
@@ -220,14 +220,12 @@ func (l *Log) rotate() error {
 }
 
 func (l *Log) WriteLog(level int, v ...interface{}) {
-	//fmt.Println("WriteLog", v, v[0])
 	//step1: rotate
 	if l.rotate() != nil {
 		return
 	}
 
 	//step2: gen log string
-	//fmt.Println("v type is:", reflect.TypeOf(v))
 	log_str := l.genLogString(level, v...)
 
 	//step3: write log
@@ -242,7 +240,6 @@ func (l *Log) WriteLog(level int, v ...interface{}) {
 
 //todo
 func (l *Log) genLogString(level int, v ...interface{}) string {
-	//fmt.Println("genLogString", v, v[0])
 	if len(v) >= 2 {
 		format_str, err := v[0].(string)
 
@@ -271,7 +268,6 @@ func (l *Log) dealFields(v interface{}) string {
 	//now we just deal string ,map and
 	value := reflect.ValueOf(v)
 	var vKind = value.Kind()
-	fmt.Println("dealFields v type:", reflect.TypeOf(v), value, vKind)
 
 	switch {
 	case vKind == 0:
@@ -358,7 +354,6 @@ func LogRmBasic() {
 }
 
 func LogDebug(v ...interface{}) {
-	fmt.Println("LogDebug", v, v[0])
 	if logHdr == nil {
 		return
 	}
