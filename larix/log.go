@@ -59,6 +59,13 @@ type Log struct {
 		"level": 0,
 	}
 */
+// conf define for ini conf to map
+// now not use
+type LogConf struct {
+	File   string `ini:"file"`
+	Rotate bool   `ini:"rotate"`
+	Level  int    `ini:"level"`
+}
 
 //log level
 const (
@@ -93,7 +100,7 @@ func LogInit(conf map[string]interface{}) error {
 	logHdr = &Log{}
 
 	//why use exists ,not use err; for get memeber succ ,exists set to true, not false,
-	tmpFile, exists := conf["file"]
+	tmpFile, exists := conf["log_path"]
 	if exists {
 		file_path, exists := tmpFile.(string)
 		if !exists {
@@ -106,7 +113,7 @@ func LogInit(conf map[string]interface{}) error {
 		panic("log file path not found, please set by file field")
 	}
 
-	tmpRotate, exists := conf["rotate"]
+	tmpRotate, exists := conf["log_rotate"]
 	if exists {
 		logHdr.Rotate, exists = tmpRotate.(bool)
 		if !exists {
@@ -117,7 +124,7 @@ func LogInit(conf map[string]interface{}) error {
 		logHdr.Rotate = false
 	}
 
-	tmpLevel, exists := conf["level"]
+	tmpLevel, exists := conf["log_level"]
 	if exists {
 		logHdr.Level, exists = tmpLevel.(int)
 		if !exists {
