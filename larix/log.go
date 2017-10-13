@@ -104,20 +104,20 @@ func LogInit(conf map[string]interface{}) error {
 	if exists {
 		file_path, exists := tmpFile.(string)
 		if !exists {
-			panic("log file path type error, we need string")
+			panic("log file path type error, we need string\n")
 		}
 		//we'll not check file path here
 		logHdr.File = file_path
 	} else {
 		//now we'll not support to write to stdout or stderr
-		panic("log file path not found, please set by file field")
+		panic("log file path not found, please set by file field\n")
 	}
 
 	tmpRotate, exists := conf["log_rotate"]
 	if exists {
 		logHdr.Rotate, exists = tmpRotate.(bool)
 		if !exists {
-			io.WriteString(os.Stdout, "log rotate get failed, we need bool type, and now set to true")
+			io.WriteString(os.Stdout, "log rotate get failed, we need bool type, and now set to true\n")
 			logHdr.Rotate = true
 		}
 	} else {
@@ -128,11 +128,11 @@ func LogInit(conf map[string]interface{}) error {
 	if exists {
 		logHdr.Level, exists = tmpLevel.(int)
 		if !exists {
-			io.WriteString(os.Stdout, "log level get failed, we need int type, and now set to debug")
+			io.WriteString(os.Stdout, "log level get failed, we need int type, and now set to debug\n")
 			logHdr.Level = LOG_DEBUG
 		}
 		if logHdr.Level >= LOG_OVER {
-			io.WriteString(os.Stdout, "log level invalid, now set to debug")
+			io.WriteString(os.Stdout, "log level invalid, now set to debug\n")
 			logHdr.Level = LOG_DEBUG
 		}
 	} else {
@@ -157,13 +157,13 @@ func LogInit(conf map[string]interface{}) error {
 	var errf error
 	logHdr.nfd, errf = os.OpenFile(nlfile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, os.ModeSetuid|os.ModeSetgid|0660)
 	if errf != nil {
-		panic(fmt.Sprintf("open log file %s failed, %s", nlfile, errf.Error()))
+		panic(fmt.Sprintf("open log file %s failed, %s\n", nlfile, errf.Error()))
 	}
 
 	logHdr.wfd, errf = os.OpenFile(wlfile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, os.ModeSetuid|os.ModeSetgid|0660)
 	if errf != nil {
 		logHdr.nfd.Close()
-		panic(fmt.Sprintf("open wflog file %s failed, %s", wlfile, errf.Error()))
+		panic(fmt.Sprintf("open wflog file %s failed, %s\n", wlfile, errf.Error()))
 	}
 
 	// normal Log Handler

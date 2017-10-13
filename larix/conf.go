@@ -3,13 +3,11 @@ package larix
 /**
  * conf interface , plugins frame, support for multi
  * types conf
- * note: not complete for value type not parse succ
  *
  **/
 import (
 	"fmt"
 	"os"
-	"reflect"
 	"strings"
 
 	ini "github.com/go-ini/ini"
@@ -127,7 +125,6 @@ func loadIni(configs []string) {
 		for _, key := range keys {
 			lower_key := strings.ToLower(key)
 			_conf.ConfigCache[lower_section][lower_key] = cfg.Section(section).Key(key).Value()
-			fmt.Println(section, key, reflect.TypeOf(_conf.ConfigCache[lower_section][lower_key]))
 
 		}
 	}
