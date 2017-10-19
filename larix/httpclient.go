@@ -38,7 +38,7 @@ func (hc *HttpClient) Request(method string, uri string, body io.Reader) ([]byte
 	url := fmt.Sprintf("http://%s:%d%s", hc.Ip, hc.Port, uri)
 
 	client := &http.Client{
-		Timeout: hc.Timeout_ms * time.Millisecond,
+		Timeout: time.Duration(hc.Timeout_ms) * time.Millisecond,
 	}
 
 	r_method := strings.ToUpper(method)
