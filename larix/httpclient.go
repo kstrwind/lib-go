@@ -72,7 +72,7 @@ func (hc *HttpClient) Request(method string, uri string, body io.Reader) ([]byte
 			"url":       url,
 		}
 		LogWarn(log_info)
-		return []byte{}, errors.New("http request status wrong")
+		return []byte{}, errors.New(fmt.Sprintf("http status is %d", resp.StatusCode))
 	}
 
 	//decode json

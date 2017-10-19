@@ -117,8 +117,8 @@ func LogInit(conf map[string]interface{}) error {
 	if exists {
 		logHdr.Rotate, exists = tmpRotate.(bool)
 		if !exists {
-			io.WriteString(os.Stdout, "log rotate get failed, we need bool type, and now set to true\n")
-			logHdr.Rotate = true
+			io.WriteString(os.Stdout, "log rotate get failed, we need bool type, and now set to false\n")
+			logHdr.Rotate = false
 		}
 	} else {
 		logHdr.Rotate = false
@@ -306,8 +306,7 @@ func (l *Log) dealFields(v interface{}) string {
 		keys := value.MapKeys()
 
 		for _, key := range keys {
-			res.WriteString(fmt.Sprintf("%v[%v]", key, value.MapIndex(key)))
-			res.WriteString("\n")
+			res.WriteString(fmt.Sprintf("%v[%v] ", key, value.MapIndex(key)))
 		}
 		return res.String()
 
