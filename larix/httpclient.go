@@ -7,16 +7,18 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 )
 
 //HTTP client
 type HttpClient struct {
-	Ip                 string // ip: 127.0.0.1
-	Port               int
-	Headers            map[string]string
-	Connect_timeout_ms int
-	Operate_timeout_ms int
-	Host               string
+	Ip      string // ip: 127.0.0.1
+	Port    int
+	Headers map[string]string
+	//The timeout includes connection time, any
+	// redirects, and reading the response body
+	Timeout_ms int64
+	Host       string
 }
 
 //simple check if status OK
@@ -35,7 +37,9 @@ func (hc *HttpClient) AddHeader(field string, value string) {
 func (hc *HttpClient) Request(method string, uri string, body io.Reader) ([]byte, error) {
 	url := fmt.Sprintf("http://%s:%d%s", hc.Ip, hc.Port, uri)
 
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: hc.Timeout_ms * time.Millisecond,
+	}
 
 	r_method := strings.ToUpper(method)
 	req, err := http.NewRequest(r_method, url, body)
