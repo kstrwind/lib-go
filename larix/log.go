@@ -237,9 +237,9 @@ func (l *Log) WriteLog(level int, v ...interface{}) {
 
 	//step3: write log
 	if level < LOG_WARN {
-		l.nlog.Print(log_str)
+		l.nlog.Output(3, log_str)
 	} else {
-		l.wlog.Print(log_str)
+		l.wlog.Output(3, log_str)
 	}
 
 	return
