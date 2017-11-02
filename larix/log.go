@@ -90,8 +90,7 @@ var logString map[int]string = map[int]string{
 //Log handler
 var logHdr *Log = nil
 
-//interface
-func LogInit(conf map[string]interface{}) error {
+func LogInit(conf *LogConf) error {
 	if logHdr != nil {
 		LogFatal("re init log handler, invalid")
 		return nil
@@ -99,43 +98,15 @@ func LogInit(conf map[string]interface{}) error {
 
 	logHdr = &Log{}
 
-	//why use exists ,not use err; for get memeber succ ,exists set to true, not false,
-	tmpFile, exists := conf["log_path"]
-	if exists {
-		file_path, exists := tmpFile.(string)
-		if !exists {
-			panic("log file path type error, we need string\n")
-		}
-		//we'll not check file path here
-		logHdr.File = file_path
-	} else {
-		//now we'll not support to write to stdout or stderr
+	if conf.File == "" {
 		panic("log file path not found, please set by file field\n")
 	}
+	logHdr.File = conf.File
 
-	tmpRotate, exists := conf["log_rotate"]
-	if exists {
-		logHdr.Rotate, exists = tmpRotate.(bool)
-		if !exists {
-			io.WriteString(os.Stdout, "log rotate get failed, we need bool type, and now set to false\n")
-			logHdr.Rotate = false
-		}
-	} else {
-		logHdr.Rotate = false
-	}
-
-	tmpLevel, exists := conf["log_level"]
-	if exists {
-		logHdr.Level, exists = tmpLevel.(int)
-		if !exists {
-			io.WriteString(os.Stdout, "log level get failed, we need int type, and now set to debug\n")
-			logHdr.Level = LOG_DEBUG
-		}
-		if logHdr.Level >= LOG_OVER {
-			io.WriteString(os.Stdout, "log level invalid, now set to debug\n")
-			logHdr.Level = LOG_DEBUG
-		}
-	} else {
+	logHdr.Rotate = conf.Rotate
+	logHdr.Level = conf.Level
+	if logHdr.Level >= LOG_OVER || logHdr.Level < LOG_DEBUG {
+		io.WriteString(os.Stdout, "log level invalid, we set to debug\n")
 		logHdr.Level = LOG_DEBUG
 	}
 
