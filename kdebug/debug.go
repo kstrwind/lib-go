@@ -10,10 +10,10 @@ import (
 func VarDump(s interface{}) {
 	indent := ""
 
-	var_dump(reflect.ValueOf(s), indent, "")
+	varDump(reflect.ValueOf(s), indent, "")
 }
 
-func var_dump(value reflect.Value, indent string, prestr string) {
+func varDump(value reflect.Value, indent string, prestr string) {
 	var vKind = value.Kind()
 	r_indent := indent
 	if prestr != "" {
@@ -31,7 +31,7 @@ func var_dump(value reflect.Value, indent string, prestr string) {
 	//uintptr
 	case vKind == 12:
 		//fmt.Printf("%s[%s] ", r_indent, value.Type())
-		var_dump(value, indent, fmt.Sprintf("%s[%s] --> ", indent, value.Type()))
+		varDump(value, indent, fmt.Sprintf("%s[%s] --> ", indent, value.Type()))
 
 	//float + complex
 	case vKind < 17:
@@ -46,7 +46,7 @@ func var_dump(value reflect.Value, indent string, prestr string) {
 				break
 			}
 			//fmt.Printf("%s[%d] :", r_indent+"    ", index)
-			var_dump(value.Index(index), "    "+indent, fmt.Sprintf("%s[%d] :", r_indent+"    ", index))
+			varDump(value.Index(index), "    "+indent, fmt.Sprintf("%s[%d] :", r_indent+"    ", index))
 			index++
 		}
 
@@ -60,13 +60,13 @@ func var_dump(value reflect.Value, indent string, prestr string) {
 		keys := value.MapKeys()
 		for _, key := range keys {
 			//fmt.Printf("%s[%s] : ", indent+"    ", key)
-			var_dump(value.MapIndex(key), "    "+indent, fmt.Sprintf("%s[%s] : ", indent+"    ", key))
+			varDump(value.MapIndex(key), "    "+indent, fmt.Sprintf("%s[%s] : ", indent+"    ", key))
 		}
 
 	//ptr
 	case vKind == 22:
 		//fmt.Printf("%s[%s] -->\n", indent, value.Type())
-		var_dump(reflect.Indirect(value), indent, fmt.Sprintf("%s[%s] --> ", indent, value.Type()))
+		varDump(reflect.Indirect(value), indent, fmt.Sprintf("%s[%s] --> ", indent, value.Type()))
 
 	//slice
 	case vKind == 23:
@@ -78,7 +78,7 @@ func var_dump(value reflect.Value, indent string, prestr string) {
 				break
 			}
 			//fmt.Printf("%s[%d] : ", r_indent+"    ", index)
-			var_dump(value.Index(index), "    "+indent, fmt.Sprintf("%s[%d] : ", indent+"    ", index))
+			varDump(value.Index(index), "    "+indent, fmt.Sprintf("%s[%d] : ", indent+"    ", index))
 			index++
 		}
 		fmt.Printf("%s//end %s\n", indent, vKind.String())
@@ -92,14 +92,14 @@ func var_dump(value reflect.Value, indent string, prestr string) {
 		fmt.Printf("%sstruct[%s] ==> {\n", r_indent, value.Type())
 		t := value.Type()
 		for k := 0; k < t.NumField(); k++ {
-			var_dump(value.Field(k), indent+"    ", fmt.Sprintf("%s%s ", indent+"    ", t.Field(k).Name))
+			varDump(value.Field(k), indent+"    ", fmt.Sprintf("%s%s ", indent+"    ", t.Field(k).Name))
 		}
 		fmt.Printf("%s} //end %s\n", indent, vKind.String())
 
 	//Unsafeptr
 	case vKind == 26:
 		//fmt.Printf("%s[%s] -->\n", r_indent, vKind.String())
-		var_dump(reflect.Indirect(value), indent, fmt.Sprintf("%s[%s] --> ", indent, vKind.String()))
+		varDump(reflect.Indirect(value), indent, fmt.Sprintf("%s[%s] --> ", indent, vKind.String()))
 
 	default:
 		fmt.Printf("%s[%s] : %v\n", r_indent, "Unknown", value)
