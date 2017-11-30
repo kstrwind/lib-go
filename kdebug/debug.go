@@ -36,7 +36,7 @@ func varDump(value reflect.Value, indent string, preStr string) {
 	//uintptr
 	case vKind == 12:
 		//fmt.Printf("%s[%s] ", r_indent, value.Type())
-		varDump(value, indent, fmt.Sprintf("%s[%s] --> ", indent, value.Type()))
+		varDump(value, indent, fmt.Sprintf("%s[%s] --> ", rIndent, value.Type()))
 
 	//float + complex
 	case vKind < 17:
@@ -71,11 +71,11 @@ func varDump(value reflect.Value, indent string, preStr string) {
 	//ptr
 	case vKind == 22:
 		//fmt.Printf("%s[%s] -->\n", indent, value.Type())
-		varDump(reflect.Indirect(value), indent, fmt.Sprintf("%s[%s] --> ", indent, value.Type()))
+		varDump(reflect.Indirect(value), indent, fmt.Sprintf("%s[%s] --> ", rIndent, value.Type()))
 
 	//slice
 	case vKind == 23:
-		fmt.Printf("%sslice[%s](%d) ==>\n", indent, value.Type(), value.Len())
+		fmt.Printf("%sslice[%s](%d) ==>\n", rIndent, value.Type(), value.Len())
 		//fmt.Printf("%s%s", indent+"    ", t.Field(k).Name)
 		index := 0
 		for {
@@ -105,7 +105,7 @@ func varDump(value reflect.Value, indent string, preStr string) {
 	//Unsafeptr
 	case vKind == 26:
 		//fmt.Printf("%s[%s] -->\n", r_indent, vKind.String())
-		varDump(reflect.Indirect(value), indent, fmt.Sprintf("%s[%s] --> ", indent, vKind.String()))
+		varDump(reflect.Indirect(value), indent, fmt.Sprintf("%s[%s] --> ", rIndent, vKind.String()))
 
 	default:
 		fmt.Printf("%s[%s] : %v\n", rIndent, "Unknown", value)
