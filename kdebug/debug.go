@@ -36,7 +36,6 @@ func varDump(value reflect.Value, indent string, preStr string) {
 	//uintptr
 	case vKind == 12:
 		//fmt.Printf("%s[%s] ", r_indent, value.Type())
-
 		varDump(value, indent, fmt.Sprintf("%s[%s] --> ", indent, value.Type()))
 
 	//float + complex
