@@ -14,7 +14,7 @@ import (
 type HttpClient struct {
 	Ip      string // ip: 127.0.0.1
 	Port    int
-	Headers map[string]string
+	Headers map[string]string // for HTTP lib set
 	//The timeout includes connection time, any
 	// redirects, and reading the response body
 	Timeout_ms int64
