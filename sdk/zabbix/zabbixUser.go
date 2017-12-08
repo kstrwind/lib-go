@@ -1,1 +1,1 @@
-package sdk
+package zabbix
