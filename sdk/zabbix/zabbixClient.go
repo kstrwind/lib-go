@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"math/rand"
 	"strconv"
 	"strings"
 	"time"
@@ -24,12 +23,6 @@ const (
 // Note: keys must in lower-case letters
 var ZBXHeaders = map[string]string{
 	"content-type": "application/json-rpc",
-}
-
-// ZBXInternalUser for zabbix internal user check
-var ZBXInternalUser = map[string]int{
-	"guest": 1,
-	"Admin": 1,
 }
 
 // ZBXConf define a conf fields map for conf to decode
@@ -182,100 +175,6 @@ func (z *ZBXClient) IsZBXGroup(groupID string) (bool, error) {
 		return false, nil
 	}
 	return true, nil
-}
-
-// IsZBXUser check if userName is zabbix user
-func (z *ZBXClient) IsZBXUser(userName string) bool {
-	if ZBXInternalUser[userName] == 1 {
-		return true
-	}
-	return false
-}
-
-// GenPasswd to create a passwd for user
-// for user init to zabbix should with passwd
-func (z *ZBXClient) GenPasswd(uName string) string {
-	var passwd bytes.Buffer
-	passwd.WriteString(uName)
-	passwd.WriteString(strconv.FormatInt(time.Now().Unix(), 10))
-	// + 2位随机
-	r := rand.New(rand.NewSource(time.Now().Unix()))
-	passwd.WriteString(string(r.Intn(10)))
-	passwd.WriteString(string(r.Intn(10)))
-	return passwd.String()
-}
-
-// UserLogin  login zabbix api server
-func (z *ZBXClient) UserLogin() error {
-	reqBody := ZBXRequest{
-		JSONRPC: ZBXJSONVersion,
-		Method:  "user.login",
-		ID:      z.ZBXID(),
-	}
-	reqBody.Params = map[string]string{
-		"user":     z.User,
-		"password": z.Passwd,
-	}
-
-	res, err := z.request(reqBody, ZBXDefaultRetry)
-	if err != nil {
-		logInfo := map[string]interface{}{
-			"message": "Zabbix login failed",
-			"user":    z.User,
-			"error":   err.Error(),
-		}
-		larix.LogFatal(logInfo)
-	}
-
-	ok := false
-	if z.sessionid, ok = res.Result.(string); !ok || z.sessionid == "" {
-		logInfo := map[string]interface{}{
-			"message": "Zabbix login failed for sessionid not found",
-			"res":     res.Result,
-		}
-		larix.LogFatal(logInfo)
-		return errors.New("login return no sessionid")
-	}
-
-	return nil
-}
-
-// UserLogout to logout a zabbix client from zabbix api server
-func (z *ZBXClient) UserLogout() error {
-	//check if has login
-	if !z.HasLogin() {
-		return nil
-	}
-	reqBody := ZBXRequest{
-		JSONRPC: global.ZBX_JSONRPC_VERSION,
-		Method:  "user.logout",
-		ID:      z.ZBXID(),
-		Auth:    z.sessionid,
-	}
-
-	res, err := z.request(reqBody, ZBXDefaultRetry)
-	if err != nil {
-		logInfo := map[string]interface{}{
-			"message": "Zabbix logout failed",
-			"user":    z.User,
-			"error":   err.Error(),
-		}
-		larix.LogFatal(logInfo)
-	}
-
-	if logoutRes, ok := res.Result.(bool); !ok || !logoutRes {
-		logInfo := map[string]interface{}{
-			"message": "Zabbix logout failed for return failed",
-			"user":    z.User,
-			"res":     res.Result,
-		}
-		larix.LogFatal(logInfo)
-		return errors.New("logout return failed")
-	}
-
-	//logout succ
-	z.sessionid = ""
-	return nil
 }
 
 // request for request a zabbix server
