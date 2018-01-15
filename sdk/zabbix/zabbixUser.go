@@ -44,6 +44,7 @@ func (z *ZBXClient) UserLogin() error {
 			"error":   err.Error(),
 		}
 		larix.LogFatal(logInfo)
+		return err
 	}
 
 	ok := false
@@ -70,6 +71,7 @@ func (z *ZBXClient) UserLogout() error {
 		Method:  "user.logout",
 		ID:      z.ZBXID(),
 		Auth:    z.sessionid,
+		Params:  make(map[string]string),
 	}
 
 	res, err := z.request(reqBody, ZBXDefaultRetry)
@@ -80,6 +82,7 @@ func (z *ZBXClient) UserLogout() error {
 			"error":   err.Error(),
 		}
 		larix.LogFatal(logInfo)
+		return err
 	}
 
 	if logoutRes, ok := res.Result.(bool); !ok || !logoutRes {

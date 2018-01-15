@@ -216,7 +216,7 @@ func (z *ZBXClient) request(reqBody interface{}, retry uint32) (*ZBXResponse, er
 	}
 
 	// res data decode
-	var resData *ZBXResponse
+	var resData = &ZBXResponse{}
 	err = json.Unmarshal(reqRes, resData)
 	if err != nil {
 		return nil, err
