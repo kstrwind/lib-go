@@ -3,6 +3,8 @@ package kdebug
 import (
 	"errors"
 	"fmt"
+	"io"
+	"os"
 	"reflect"
 	"runtime"
 )
@@ -65,7 +67,7 @@ func varDump(value reflect.Value, indent string, preStr string) {
 		keys := value.MapKeys()
 		for _, key := range keys {
 			//fmt.Printf("%s[%s] : ", indent+"    ", key)
-			varDump(value.MapIndex(key), "    "+indent, fmt.Sprintf("%s\"%s\" : ", indent+"    ", key))
+			varDump(value.MapIndex(key), "    "+indent, fmt.Sprintf("%s\"%v\" : ", indent+"    ", key))
 		}
 
 	//ptr
@@ -121,4 +123,36 @@ func GetFuncName() (string, error) {
 	}
 
 	return runtime.FuncForPC(pc).Name(), nil
+}
+
+//note: 如果字段的tag 设置不是符合规范的，则用tag返回时值是不确定的
+func Struct2Map(obj interface{}, useTag bool, tag string) map[string]interface{} {
+	defer func() {
+		if err := recover(); err != nil {
+			io.WriteString(os.Stderr, fmt.Sprintf("%v", err))
+		}
+	}()
+
+	obj_type := reflect.TypeOf(obj)
+	obj_value := reflect.ValueOf(obj)
+
+	res := make(map[string]interface{})
+
+	for i := 0; i < obj_type.NumField(); i++ {
+		r_fields := obj_type.Field(i)
+
+		//check type
+		if useTag {
+			if r_fields.Tag.Get(tag) != "" {
+				res[r_fields.Tag.Get(tag)] = obj_value.FieldByName(r_fields.Name)
+				continue
+			}
+		}
+
+		//use param
+		res[r_fields.Name] = obj_value.FieldByName(r_fields.Name)
+	}
+
+	return res
+
 }
