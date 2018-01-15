@@ -110,7 +110,7 @@ func (z *ZBXClient) GenUserPasswd(uName string) string {
 	return passwd.String()
 }
 
-// ZBXUserProperty define zabbix user object
+// ZBXUser define zabbix user object
 type ZBXUser struct {
 	UserID        string `json:"userid"`
 	Alias         string `json:"alias"`
