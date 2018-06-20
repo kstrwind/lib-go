@@ -9,6 +9,7 @@ import (
 	"runtime"
 )
 
+// VarDump 输出一个数据的完整数据类型，和PHP的var_dump函数很相似
 func VarDump(s interface{}) {
 	indent := ""
 	switch s.(type) {
@@ -117,6 +118,7 @@ func varDump(value reflect.Value, indent string, preStr string) {
 	return
 }
 
+// GetFuncName 获取函数名，用来做DEBUG
 func GetFuncName() (string, error) {
 	pc, _, _, succ := runtime.Caller(1)
 	if !succ {
@@ -126,6 +128,7 @@ func GetFuncName() (string, error) {
 	return runtime.FuncForPC(pc).Name(), nil
 }
 
+//Struct2Map 用来把struct 转成map
 //note: 如果字段的tag 设置不是符合规范的，则用tag返回时值是不确定的
 func Struct2Map(obj interface{}, useTag bool, tag string) map[string]interface{} {
 	defer func() {
@@ -134,24 +137,24 @@ func Struct2Map(obj interface{}, useTag bool, tag string) map[string]interface{}
 		}
 	}()
 
-	obj_type := reflect.TypeOf(obj)
-	obj_value := reflect.ValueOf(obj)
+	objType := reflect.TypeOf(obj)
+	objValue := reflect.ValueOf(obj)
 
 	res := make(map[string]interface{})
 
-	for i := 0; i < obj_type.NumField(); i++ {
-		r_fields := obj_type.Field(i)
+	for i := 0; i < objType.NumField(); i++ {
+		rFields := objType.Field(i)
 
 		//check type
 		if useTag {
-			if r_fields.Tag.Get(tag) != "" {
-				res[r_fields.Tag.Get(tag)] = obj_value.FieldByName(r_fields.Name)
+			if rFields.Tag.Get(tag) != "" {
+				res[rFields.Tag.Get(tag)] = objValue.FieldByName(rFields.Name)
 				continue
 			}
 		}
 
 		//use param
-		res[r_fields.Name] = obj_value.FieldByName(r_fields.Name)
+		res[rFields.Name] = objValue.FieldByName(rFields.Name)
 	}
 
 	return res
