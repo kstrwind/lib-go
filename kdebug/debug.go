@@ -59,7 +59,7 @@ func varDump(value reflect.Value, indent string, preStr string) {
 
 	//chan\func\Interface
 	case vKind < 21:
-		fmt.Printf("%s[%s]%v", rIndent, value.Type(), value)
+		fmt.Printf("%s[%s]%v\n", rIndent, value.Type(), value)
 
 	//Map
 	case vKind == 21:
@@ -101,6 +101,7 @@ func varDump(value reflect.Value, indent string, preStr string) {
 		t := value.Type()
 		for k := 0; k < value.NumField(); k++ {
 			varDump(value.Field(k), indent+"    ", fmt.Sprintf("%s%s ", indent+"    ", t.Field(k).Name))
+
 		}
 		fmt.Printf("%s} //end %s\n", indent, vKind.String())
 
